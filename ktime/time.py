@@ -1,3 +1,5 @@
+#from __future__ import division
+
 def gmtime(secs=None):
     epoch = (1970, 1, 1, 0, 0, 0, 3, 1, 0)
     if secs == 0: # epoch
@@ -24,7 +26,11 @@ def gmtime(secs=None):
         else:
             return NORMAL_YEAR_SECS
 
-    while ((remaining / NORMAL_YEAR_SECS) >= 1):
+    while (remaining < 0):
+        remaining += secs_this_year(result[0] - 1)
+        result[0] -= 1
+
+    while (remaining / secs_this_year(result[0]) >= 1):
         remaining -= secs_this_year(result[0])
         result[0] += 1
 
@@ -67,7 +73,7 @@ def gmtime(secs=None):
         t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
         y -= m < 3
         PYTHON_DAY_OF_WEEK_OFFSET = 6 # in original algorithm 0=Sunday
-        return (y + y/4 - y/100 + y/400 + t[m-1] + d + PYTHON_DAY_OF_WEEK_OFFSET) % 7
+        return int((y + y/4 - y/100 + y/400 + t[m-1] + d + PYTHON_DAY_OF_WEEK_OFFSET) % 7)
 
     result[6] = day_of_week(result[0], result[1], result[2])
 

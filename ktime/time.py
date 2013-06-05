@@ -37,18 +37,38 @@ def gmtime(secs=None):
         return secs_this_month
 
     SECS_THIS_DAY = 86400
-
     while remaining / secs_this_month(result[0], result[1]) >= 1:
         remaining -= secs_this_month(result[0], result[1])
         result[7] += days[result[1]]
         result[1] += 1
-    print result, remaining, secs_this_month(result[0], result[1]), is_leap_year(result[0])
 
     while remaining / SECS_THIS_DAY >= 1:
-        print result, remaining, SECS_THIS_DAY
         remaining -= SECS_THIS_DAY
         result[2] += 1
         result[7] += 1
 
-    result[6] = result[7] % 7
+    SECS_PER_HOUR = 3600
+    while remaining / SECS_PER_HOUR >= 1:
+        remaining -= SECS_PER_HOUR
+        result[3] += 1
+
+    SECS_PER_MIN = 60
+    while remaining / SECS_PER_MIN >= 1:
+        remaining -= SECS_PER_MIN
+        result[4] += 1
+
+    result[5] = int(remaining)
+    remaining -= int(remaining)
+
+    def day_of_week(y, m, d):
+        """
+        Ripped from https://en.wikipedia.org/wiki/Calculating_the_day_of_the_week
+        and translated to Python"""
+        t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
+        y -= m < 3
+        PYTHON_DAY_OF_WEEK_OFFSET = 6 # in original algorithm 0=Sunday
+        return (y + y/4 - y/100 + y/400 + t[m-1] + d + PYTHON_DAY_OF_WEEK_OFFSET) % 7
+
+    result[6] = day_of_week(result[0], result[1], result[2])
+
     return tuple(result)
